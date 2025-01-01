@@ -78,3 +78,11 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map(name: "verification_tokens")
 }
+
+model Employee {
+  id       String @id @default(cuid())
+  email    String @unique
+  name     String
+  password String
+  // Add any other relevant fields
+}

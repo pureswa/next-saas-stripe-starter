@@ -14,5 +14,13 @@ export const marketingConfig: MarketingConfig = {
       title: "Documentation",
       href: "/docs",
     },
+    {
+      title: "Careers",
+      href: "/careers",
+    },
+    {
+      title: "Employee Login",
+      href: "/employee-login",
+    },
   ],
-}
+};

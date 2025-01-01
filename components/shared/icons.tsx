@@ -31,6 +31,8 @@ import {
   Trash,
   User,
   X,
+  MessageCircle,
+  Send,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -134,4 +136,6 @@ export const Icons = {
   ),
   user: User,
   warning: AlertTriangle,
-};
+  messageCircle: MessageCircle,
+  send: Send,
+} as const;

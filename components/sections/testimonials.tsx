@@ -28,6 +28,8 @@ export default function Testimonials() {
                           className="size-full rounded-full border"
                           src={item.image}
                           alt={item.name}
+                          placeholder="blur"
+                          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                         />
                       </span>
                       <div>

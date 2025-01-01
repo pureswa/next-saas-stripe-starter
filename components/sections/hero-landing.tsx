@@ -1,27 +1,19 @@
-import Link from "next/link";
+"use client"
 
-import { env } from "@/env.mjs";
+import { useState } from "react";
+import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { cn, nFormatter } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icons";
+// import { ColorPicker } from "@/components/ui/color-picker";
 
-export default async function HeroLanding() {
-  const { stargazers_count: stars } = await fetch(
-    "https://api.github.com/repos/mickasmt/next-saas-stripe-starter",
-    {
-      ...(env.GITHUB_OAUTH_TOKEN && {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_OAUTH_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }),
-      // data will revalidate every hour
-      next: { revalidate: 3600 },
-    },
-  )
-    .then((res) => res.json())
-    .catch((e) => console.log(e));
+interface HeroLandingProps {
+  stars: number;
+}
+
+export default function HeroLanding({ stars }: HeroLandingProps) {
+  const [color, setColor] = useState("#000000");
 
   return (
     <section className="space-y-6 py-12 sm:py-20 lg:py-20">
@@ -46,18 +38,12 @@ export default async function HeroLanding() {
           </span>
         </h1>
 
-        <p
-          className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8"
-          style={{ animationDelay: "0.35s", animationFillMode: "forwards" }}
-        >
+        <p className="max-w-2xl text-balance leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           Build your next project using Next.js 14, Prisma, Neon, Auth.js v5,
           Resend, React Email, Shadcn/ui, Stripe.
         </p>
 
-        <div
-          className="flex justify-center space-x-2 md:space-x-4"
-          style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
-        >
+        <div className="flex justify-center space-x-2 md:space-x-4">
           <Link
             href="/pricing"
             prefetch={true}
@@ -88,6 +74,16 @@ export default async function HeroLanding() {
               <span className="font-semibold">{nFormatter(stars)}</span>
             </p>
           </Link>
+        </div>
+
+        <div className="mt-8 w-full max-w-md">
+          <h2 className="text-xl font-semibold mb-4">Try our Color Picker</h2>
+          {/* <ColorPicker
+            color={color}
+            onChange={setColor}
+            className="mx-auto"
+          /> */}
+          <p className="mt-2 text-sm text-muted-foreground">Selected color: {color}</p>
         </div>
       </div>
     </section>

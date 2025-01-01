@@ -14,6 +14,7 @@ export const siteConfig: SiteConfig = {
     github: "https://github.com/mickasmt/next-saas-stripe-starter",
   },
   mailSupport: "support@saas-starter.com",
+  helpNumber: "+1 (555) 123-4567", // Updated with the new help number
 };
 
 export const footerLinks: SidebarNavItem[] = [

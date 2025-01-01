@@ -50,7 +50,7 @@ export const pricingData: SubscriptionPlan[] = [
   },
   {
     title: "Business",
-    description: "For Power Users",
+    description: "For larger businesses or those with custom needs",
     benefits: [
       "Unlimited posts",
       "Real-time analytics and reporting",
@@ -60,12 +60,12 @@ export const pricingData: SubscriptionPlan[] = [
     ],
     limitations: [],
     prices: {
-      monthly: 30,
-      yearly: 300,
+      monthly: 99,
+      yearly: 990,
     },
     stripeIds: {
-      monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
-      yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
+      monthly: "price_business_monthly",
+      yearly: "price_business_yearly",
     },
   },
 ];

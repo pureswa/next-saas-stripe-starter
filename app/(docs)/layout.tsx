@@ -11,11 +11,11 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   return (
     <div className="flex flex-col">
       <NavMobile />
-      <NavBar />
+      {/* <NavBar /> */}
       <MaxWidthWrapper className="min-h-screen" large>
         {children}
       </MaxWidthWrapper>
-      <SiteFooter className="border-t" />
+      {/* Remove the SiteFooter from here */}
     </div>
   );
 }

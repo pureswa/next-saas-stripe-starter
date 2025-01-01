@@ -1,7 +1,7 @@
-import { Metadata } from "next";
-import { clsx, type ClassValue } from "clsx";
-import ms from "ms";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Metadata } from "next";
+import ms from "ms";
 
 import { env } from "@/env.mjs";
 import { siteConfig } from "@/config/site";

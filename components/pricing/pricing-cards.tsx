@@ -1,8 +1,9 @@
 "use client";
 
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import Link from "next/link";
 import { UserSubscriptionPlan } from "@/types";
+import { useRouter } from "next/navigation";
 
 import { SubscriptionPlan } from "@/types/index";
 import { pricingData } from "@/config/subscriptions";
@@ -27,76 +28,60 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
       : false;
   const [isYearly, setIsYearly] = useState<boolean>(!!isYearlyDefault);
   const { setShowSignInModal } = useContext(ModalContext);
+  const router = useRouter();
+  const [debugInfo, setDebugInfo] = useState<string>('');
 
   const toggleBilling = () => {
     setIsYearly(!isYearly);
   };
 
-  const PricingCard = ({ offer }: { offer: SubscriptionPlan }) => {
+  const handleSubscribe = (planId: string, planTitle: string) => {
+    console.log(`Clicked on ${planTitle} plan with ID: ${planId}`);
+    setDebugInfo(`Last clicked: ${planTitle} plan`);
+    // Your existing subscription logic here
+    router.push(`/checkout?plan=${planId}`);
+  };
+
+  const PricingCard = React.memo(({ offer }: { offer: SubscriptionPlan }) => {
     return (
       <div
-        className={cn(
-          "relative flex flex-col overflow-hidden rounded-3xl border shadow-sm",
-          offer.title.toLocaleLowerCase() === "pro"
-            ? "-m-0.5 border-2 border-purple-400"
-            : "",
-        )}
+        className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden"
         key={offer.title}
       >
-        <div className="min-h-[150px] items-start space-y-4 bg-muted/50 p-6">
-          <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            {offer.title}
-          </p>
-
-          <div className="flex flex-row">
-            <div className="flex items-end">
-              <div className="flex text-left text-3xl font-semibold leading-6">
-                {isYearly && offer.prices.monthly > 0 ? (
-                  <>
-                    <span className="mr-2 text-muted-foreground/80 line-through">
-                      ${offer.prices.monthly}
-                    </span>
-                    <span>${offer.prices.yearly / 12}</span>
-                  </>
-                ) : (
-                  `$${offer.prices.monthly}`
-                )}
-              </div>
-              <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
-                <div>/month</div>
-              </div>
-            </div>
-          </div>
-          {offer.prices.monthly > 0 ? (
-            <div className="text-left text-sm text-muted-foreground">
-              {isYearly
-                ? `$${offer.prices.yearly} will be charged when annual`
-                : "when charged monthly"}
-            </div>
-          ) : null}
-        </div>
-
-        <div className="flex h-full flex-col justify-between gap-16 p-6">
-          <ul className="space-y-2 text-left text-sm font-medium leading-normal">
-            {offer.benefits.map((feature) => (
-              <li className="flex items-start gap-x-3" key={feature}>
-                <Icons.check className="size-5 shrink-0 text-purple-500" />
-                <p>{feature}</p>
-              </li>
-            ))}
-
-            {offer.limitations.length > 0 &&
-              offer.limitations.map((feature) => (
-                <li
-                  className="flex items-start text-muted-foreground"
-                  key={feature}
-                >
-                  <Icons.close className="mr-3 size-5 shrink-0" />
-                  <p>{feature}</p>
+        <div className="p-6 flex flex-col justify-between h-full">
+          <div>
+            <h3 className="text-2xl font-semibold leading-none tracking-tight text-gray-900">
+              {offer.title}
+            </h3>
+            <p className="text-sm text-gray-500 mt-2">{offer.description}</p>
+            <p className="mt-4">
+              <span className="text-4xl font-bold text-gray-900">
+                ${isYearly ? offer.prices.yearly / 12 : offer.prices.monthly}
+              </span>
+              <span className="text-sm font-medium text-gray-500">/month</span>
+            </p>
+            <ul className="mt-4 space-y-2">
+              {offer.benefits.map((benefit, index) => (
+                <li key={index} className="flex items-center text-sm text-gray-700">
+                  <svg
+                    className="w-4 h-4 mr-2 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  {benefit}
                 </li>
               ))}
-          </ul>
-
+            </ul>
+          </div>
           {userId && subscriptionPlan ? (
             offer.title === "Starter" ? (
               <Link
@@ -106,7 +91,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                     variant: "outline",
                     rounded: "full",
                   }),
-                  "w-full",
+                  "w-full mt-6",
                 )}
               >
                 Go to dashboard
@@ -120,21 +105,16 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
             )
           ) : (
             <Button
-              variant={
-                offer.title.toLocaleLowerCase() === "pro"
-                  ? "default"
-                  : "outline"
-              }
-              rounded="full"
-              onClick={() => setShowSignInModal(true)}
+              className="mt-6 w-full"
+              onClick={() => handleSubscribe(isYearly ? offer.stripeIds.yearly : offer.stripeIds.monthly, offer.title)}
             >
-              Sign in
+              Subscribe to {offer.title}
             </Button>
           )}
         </div>
       </div>
     );
-  };
+  });
 
   return (
     <MaxWidthWrapper>
@@ -167,7 +147,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           </ToggleGroup>
         </div>
 
-        <div className="grid gap-5 bg-inherit py-5 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {pricingData.map((offer) => (
             <PricingCard offer={offer} key={offer.title} />
           ))}
@@ -188,6 +168,9 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           </strong>
         </p>
       </section>
+      <div className="mt-4 text-sm text-gray-500" aria-hidden="true">
+        Debug: {debugInfo}
+      </div>
     </MaxWidthWrapper>
   );
 }
