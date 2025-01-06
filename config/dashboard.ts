@@ -11,7 +11,7 @@ export const sidebarLinks: SidebarNavItem[] = [
         icon: "laptop",
         title: "Admin Panel",
         authorizeOnly: UserRole.ADMIN,
-      },
+      },  
       { href: "/dashboard", icon: "dashboard", title: "Dashboard" },
       {
         href: "/dashboard/billing",
@@ -48,6 +48,16 @@ export const sidebarLinks: SidebarNavItem[] = [
         title: "Support",
         authorizeOnly: UserRole.USER,
         disabled: true,
+      },
+    ],
+  },
+  {
+    title: "TOOLS",
+    items: [
+      {
+        href: "/database-visualizer",
+        icon: "database",
+        title: "DB Visualizer",
       },
     ],
   },
