@@ -1,11 +1,68 @@
 "use client";
+
 import { useState } from "react";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
-import ChatSection from "@/components/database-visualizer/chat-section";
-import CodeGenerationSection from "@/components/database-visualizer/code-generation-section";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+interface CodeGenerationSectionProps {
+  generatedCode: string;
+  isGenerating: boolean;
+  previewData: any;
+}
+
+function CodeGenerationSection({ generatedCode, isGenerating, previewData }: CodeGenerationSectionProps) {
+  const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
+
+  return (
+    <div className="h-full flex flex-col">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'code' | 'preview')} className="flex-grow flex flex-col">
+        <TabsList className="bg-gray-700">
+          <TabsTrigger value="code" className="data-[state=active]:bg-gray-600">Code</TabsTrigger>
+          <TabsTrigger value="preview" className="data-[state=active]:bg-gray-600">Preview</TabsTrigger>
+        </TabsList>
+        <TabsContent value="code" className="flex-grow p-4 bg-gray-900">
+          {isGenerating ? (
+            <div className="flex-grow flex items-center justify-center">
+              <p className="text-white">Generating code...</p>
+            </div>
+          ) : (
+            <SyntaxHighlighter 
+              language="sql"
+              style={vscDarkPlus}
+              customStyle={{
+                backgroundColor: 'rgb(17, 24, 39)', // Tailwind's bg-gray-900
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+                lineHeight: '1.5',
+              }}
+              className="rounded-md flex-grow overflow-auto"
+            >
+              {generatedCode || '-- Generated database code will appear here'}
+            </SyntaxHighlighter>
+          )}
+        </TabsContent>
+        <TabsContent value="preview" className="flex-grow p-4 bg-gray-900">
+          <div className="bg-gray-800 text-white p-4 rounded-md h-full overflow-auto">
+            {previewData ? (
+              <pre className="whitespace-pre-wrap">{JSON.stringify(previewData, null, 2)}</pre>
+            ) : (
+              <p>No preview data available</p>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
 
 export default function DatabaseVisualizerPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
+  const [inputMessage, setInputMessage] = useState<string>("");
   const [generatedCode, setGeneratedCode] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [previewData, setPreviewData] = useState<any>(null);
@@ -70,12 +127,37 @@ export default function DatabaseVisualizerPage() {
     }
   };
 
+  const handleSendMessage = () => {
+    if (inputMessage.trim()) {
+      addMessage({ role: "user", content: inputMessage.trim() });
+      setInputMessage("");
+    }
+  };
+
   return (
     <div className="bg-gray-900 min-h-screen text-white">
       <MaxWidthWrapper className="flex flex-col lg:flex-row min-h-screen p-4 gap-4">
-        <div className="w-full lg:w-1/2 bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div className="w-full lg:w-1/2 bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
           <h2 className="text-xl font-bold p-4 bg-gray-700">Chat</h2>
-          <ChatSection messages={chatMessages} addMessage={addMessage} />
+          <div className="flex-grow overflow-auto p-4">
+            {chatMessages.map((msg, index) => (
+              <div key={index} className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                <span className={`inline-block p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600' : 'bg-gray-700'}`}>
+                  {msg.content}
+                </span>
+        </div>
+            ))}
+        </div>
+          <div className="p-4 bg-gray-700 flex">
+            <Input
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-grow mr-2"
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            />
+            <Button onClick={handleSendMessage}>Send</Button>
+    </div>
         </div>
         <div className="w-full lg:w-1/2 bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <h2 className="text-xl font-bold p-4 bg-gray-700">Code Preview</h2>
@@ -84,8 +166,9 @@ export default function DatabaseVisualizerPage() {
             isGenerating={isGenerating} 
             previewData={previewData}
           />
-    </div>
+        </div>
       </MaxWidthWrapper>
     </div>
   );
 }
+  

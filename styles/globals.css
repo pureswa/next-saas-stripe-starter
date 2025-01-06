@@ -33,11 +33,7 @@
   }
 
   .dark {
-<<<<<<< Updated upstream
-    --background: 220 100% 6%; /* Darker navy blue */
-=======
     --background: 220 70% 10%; /* Dark navy blue */
->>>>>>> Stashed changes
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;

@@ -15,17 +15,8 @@ export const marketingConfig: MarketingConfig = {
       href: "/docs",
     },
     {
-<<<<<<< Updated upstream
-      title: "Careers",
-      href: "/careers",
-    },
-    {
-      title: "Employee Login",
-      href: "/employee-login",
-=======
       title: "Database Visualizer",
       href: "/database-visualizer",
->>>>>>> Stashed changes
     },
   ],
 };
