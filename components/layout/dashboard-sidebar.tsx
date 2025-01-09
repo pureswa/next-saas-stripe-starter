@@ -2,6 +2,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
+import { Icons } from "@/components/shared/icons";
+import { LucideProps } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { NavItem, SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
@@ -21,34 +23,12 @@ import {
 } from "@/components/ui/tooltip";
 import ProjectSwitcher from "@/components/dashboard/project-switcher";
 import { UpgradeCard } from "@/components/dashboard/upgrade-card";
-import { Icons } from "@/components/shared/icons";
-
 interface DashboardSidebarProps {
   links: SidebarNavItem[];
 }
 
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
-
-  // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
-  //
-  // const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-  //   if (typeof window !== "undefined") {
-  //     const saved = window.localStorage.getItem("sidebarExpanded");
-  //     return saved !== null ? JSON.parse(saved) : true;
-  //   }
-  //   return true;
-  // });
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     window.localStorage.setItem(
-  //       "sidebarExpanded",
-  //       JSON.stringify(isSidebarExpanded),
-  //     );
-  //   }
-  // }, [isSidebarExpanded]);
-
   const { isTablet } = useMediaQuery();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
 
@@ -59,6 +39,11 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   useEffect(() => {
     setIsSidebarExpanded(!isTablet);
   }, [isTablet]);
+
+  const IconComponent = ({ name, ...props }: { name: string } & LucideProps) => {
+    const Icon = Icons[name as keyof typeof Icons];
+    return Icon ? <Icon {...props} /> : null;
+  };
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -97,73 +82,15 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
                 {links.map((section) => (
-                  <section
-                    key={section.title}
-                    className="flex flex-col gap-0.5"
-                  >
-                    {isSidebarExpanded ? (
-                      <p className="text-xs text-muted-foreground">
-                        {section.title}
-                      </p>
-                    ) : (
-                      <div className="h-4" />
-                    )}
-                    {section.items.map((item) => {
-                      const Icon = Icons[item.icon || "arrowRight"];
-                      return (
-                        item.href && (
-                          <Fragment key={`link-fragment-${item.title}`}>
-                            {isSidebarExpanded ? (
-                              <Link
-                                key={`link-${item.title}`}
-                                href={item.disabled ? "#" : item.href}
-                                className={cn(
-                                  "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                  path === item.href
-                                    ? "bg-muted"
-                                    : "text-muted-foreground hover:text-accent-foreground",
-                                  item.disabled &&
-                                    "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                                )}
-                              >
-                                <Icon className="size-5" />
-                                {item.title}
-                                {item.badge && (
-                                  <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
-                                    {item.badge}
-                                  </Badge>
-                                )}
-                              </Link>
-                            ) : (
-                              <Tooltip key={`tooltip-${item.title}`}>
-                                <TooltipTrigger asChild>
-                                  <Link
-                                    key={`link-tooltip-${item.title}`}
-                                    href={item.disabled ? "#" : item.href}
-                                    className={cn(
-                                      "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted",
-                                      path === item.href
-                                        ? "bg-muted"
-                                        : "text-muted-foreground hover:text-accent-foreground",
-                                      item.disabled &&
-                                        "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                                    )}
-                                  >
-                                    <span className="flex size-full items-center justify-center">
-                                      <Icon className="size-5" />
-                                    </span>
-                                  </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right">
-                                  {item.title}
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </Fragment>
-                        )
-                      );
-                    })}
-                  </section>
+                  <div key={section.title}>
+                    <h3>{section.title}</h3>
+                    {section.items.map((item) => (
+                      <Link key={item.href} href={item.href}>
+                        {item.icon && <IconComponent name={item.icon} />}
+                        <span>{item.title}</span>
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </nav>
 
@@ -213,49 +140,27 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
                 <ProjectSwitcher large />
 
                 {links.map((section) => (
-                  <section
-                    key={section.title}
-                    className="flex flex-col gap-0.5"
-                  >
-                    <p className="text-xs text-muted-foreground">
-                      {section.title}
-                    </p>
-
-                    {section.items.map((item) => {
-                      const Icon = Icons[item.icon || "arrowRight"];
-                      return (
-                        item.href && (
-                          <Fragment key={`link-fragment-${item.title}`}>
-                            <Link
-                              key={`link-${item.title}`}
+                  <div key={section.title}>
+                    <h3>{section.title}</h3>
+                    {section.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
                               onClick={() => {
                                 if (!item.disabled) setOpen(false);
                               }}
-                              href={item.disabled ? "#" : item.href}
-                              className={cn(
-                                "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                path === item.href
-                                  ? "bg-muted"
-                                  : "text-muted-foreground hover:text-accent-foreground",
-                                item.disabled &&
-                                  "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                              )}
                             >
-                              <Icon className="size-5" />
-                              {item.title}
+                        {item.icon && <IconComponent name={item.icon} />}
+                        <span>{item.title}</span>
                               {item.badge && (
                                 <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
                                   {item.badge}
                                 </Badge>
                               )}
                             </Link>
-                          </Fragment>
-                        )
-                      );
-                    })}
-                  </section>
+                    ))}
+                  </div>
                 ))}
-
                 <div className="mt-auto">
                   <UpgradeCard />
                 </div>

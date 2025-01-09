@@ -78,3 +78,14 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map(name: "verification_tokens")
 }
+
+model Application {
+  id          String   @id @default(cuid())
+  jobId       String
+  position    String
+  name        String
+  email       String
+  coverLetter String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

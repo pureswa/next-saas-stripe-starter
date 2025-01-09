@@ -28,6 +28,7 @@ import {
   Search,
   Settings,
   SunMedium,
+  TestTube,
   Trash,
   User,
   X,

@@ -37,6 +37,17 @@ export const sidebarLinks: SidebarNavItem[] = [
     ],
   },
   {
+    title: "ADMIN",
+    items: [
+      {
+        href: "/admin/testing-environment",
+        icon: "test",
+        title: "Testing Environment",
+        authorizeOnly: UserRole.ADMIN,
+      },
+    ],
+  },
+  {
     title: "OPTIONS",
     items: [
       { href: "/dashboard/settings", icon: "settings", title: "Settings" },
